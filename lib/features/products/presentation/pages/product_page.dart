@@ -1,79 +1,72 @@
 import 'package:flutter/material.dart';
+import 'package:utd_store_mita/features/products/data/datasource/product_remote_datasource.dart';
+import 'package:utd_store_mita/features/products/data/models/product_model.dart';
+import 'package:intl/intl.dart';
 
-class ProductPage extends StatelessWidget {
+class ProductPage extends StatefulWidget {
   const ProductPage({super.key});
+
+  @override
+  State<ProductPage> createState() => _ProductPageState();
+}
+
+class _ProductPageState extends State<ProductPage> {
+  final datasource = ProductRemoteDatasource();
+  final rupiah = NumberFormat.currency(
+    locale: 'id',
+    symbol: 'Rp ',
+    decimalDigits: 0,
+  );
+
+  List<ProductModel> products = [];
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    getProducts();
+  }
+
+  Future<void> getProducts() async {
+    try {
+      products = await datasource.getProducts();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("UTD Store"), centerTitle: true),
+      appBar: AppBar(title: const Text("UTD Store - Mita")),
 
-      body: ListView(
-        padding: const EdgeInsets.all(16),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: products.length,
 
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            margin: const EdgeInsets.only(bottom: 16),
+              itemBuilder: (context, index) {
+                final product = products[index];
 
-            decoration: BoxDecoration(
-              color: Colors.blue,
-              borderRadius: BorderRadius.circular(16),
-            ),
+                return Card(
+                  margin: const EdgeInsets.all(12),
 
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Sepatu Sneakers",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                  child: ListTile(
+                    leading: Image.network(product.image, width: 50),
+
+                    title: Text(product.title),
+
+                    subtitle: Text(rupiah.format(product.price * 16000)),
                   ),
-                ),
-
-                SizedBox(height: 8),
-
-                Text(
-                  "Rp 250.000",
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ],
+                );
+              },
             ),
-          ),
-
-          Container(
-            padding: const EdgeInsets.all(16),
-
-            decoration: BoxDecoration(
-              color: Colors.orange,
-              borderRadius: BorderRadius.circular(16),
-            ),
-
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Tas Kulit",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                SizedBox(height: 8),
-
-                Text(
-                  "Rp 180.000",
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

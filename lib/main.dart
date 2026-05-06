@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:utd_store_mita/features/products/presentation/pages/product_page.dart';
+import 'package:utd_store_mita/core/routes/app_router.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,12 +10,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-
-      theme: ThemeData(primarySwatch: Colors.blue),
-
-      home: const ProductPage(),
+      routerConfig: router,
     );
   }
 }
