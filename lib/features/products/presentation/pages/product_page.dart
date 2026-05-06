@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
 import 'package:utd_store_mita/features/products/data/datasource/product_remote_datasource.dart';
 import 'package:utd_store_mita/features/products/data/models/product_model.dart';
-import 'package:intl/intl.dart';
+import 'package:utd_store_mita/features/products/presentation/pages/product_detail_page.dart';
 
 class ProductPage extends StatefulWidget {
   const ProductPage({super.key});
@@ -12,6 +14,7 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   final datasource = ProductRemoteDatasource();
+
   final rupiah = NumberFormat.currency(
     locale: 'id',
     symbol: 'Rp ',
@@ -54,15 +57,27 @@ class _ProductPageState extends State<ProductPage> {
               itemBuilder: (context, index) {
                 final product = products[index];
 
-                return Card(
-                  margin: const EdgeInsets.all(12),
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
 
-                  child: ListTile(
-                    leading: Image.network(product.image, width: 50),
+                      MaterialPageRoute(
+                        builder: (_) => ProductDetailPage(product: product),
+                      ),
+                    );
+                  },
 
-                    title: Text(product.title),
+                  child: Card(
+                    margin: const EdgeInsets.all(12),
 
-                    subtitle: Text(rupiah.format(product.price * 16000)),
+                    child: ListTile(
+                      leading: Image.network(product.image, width: 50),
+
+                      title: Text(product.title),
+
+                      subtitle: Text(rupiah.format(product.price * 16000)),
+                    ),
                   ),
                 );
               },
