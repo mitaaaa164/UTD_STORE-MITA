@@ -23,6 +23,8 @@ class _ProductPageState extends State<ProductPage> {
 
   List<ProductModel> products = [];
 
+  List<ProductModel> filteredProducts = [];
+
   bool isLoading = true;
 
   @override
@@ -35,6 +37,8 @@ class _ProductPageState extends State<ProductPage> {
   Future<void> getProducts() async {
     try {
       products = await datasource.getProducts();
+
+      filteredProducts = products;
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -51,36 +55,71 @@ class _ProductPageState extends State<ProductPage> {
 
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: products.length,
+          : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(12),
 
-              itemBuilder: (context, index) {
-                final product = products[index];
+                  child: TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        filteredProducts = products.where((product) {
+                          return product.title.toLowerCase().contains(
+                            value.toLowerCase(),
+                          );
+                        }).toList();
+                      });
+                    },
 
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
+                    decoration: InputDecoration(
+                      hintText: "Cari produk",
 
-                      MaterialPageRoute(
-                        builder: (_) => ProductDetailPage(product: product),
+                      prefixIcon: const Icon(Icons.search),
+
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    );
-                  },
-
-                  child: Card(
-                    margin: const EdgeInsets.all(12),
-
-                    child: ListTile(
-                      leading: Image.network(product.image, width: 50),
-
-                      title: Text(product.title),
-
-                      subtitle: Text(rupiah.format(product.price * 16000)),
                     ),
                   ),
-                );
-              },
+                ),
+
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: filteredProducts.length,
+
+                    itemBuilder: (context, index) {
+                      final product = filteredProducts[index];
+
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  ProductDetailPage(product: product),
+                            ),
+                          );
+                        },
+
+                        child: Card(
+                          margin: const EdgeInsets.all(12),
+
+                          child: ListTile(
+                            leading: Image.network(product.image, width: 50),
+
+                            title: Text(product.title),
+
+                            subtitle: Text(
+                              rupiah.format(product.price * 16000),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
     );
   }
