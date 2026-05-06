@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:utd_store_mita/features/products/presentation/pages/product_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,21 +12,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const HomePage(),
-    );
-  }
-}
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+      theme: ThemeData(primarySwatch: Colors.blue),
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("UTD Store - Mita")),
-      body: const Center(
-        child: Text("Project ETS MPL", style: TextStyle(fontSize: 24)),
-      ),
+      home: const ProductPage(),
     );
   }
 }
