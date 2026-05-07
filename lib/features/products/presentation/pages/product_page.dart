@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import 'package:utd_store_mita/core/storage/favorite_service.dart';
+
 import 'package:utd_store_mita/features/products/data/models/product_model.dart';
 
 import 'package:utd_store_mita/features/products/presentation/cubit/product_cubit.dart';
@@ -26,6 +28,21 @@ class _ProductPageState extends State<ProductPage> {
   List<ProductModel> allProducts = [];
 
   List<ProductModel> filteredProducts = [];
+
+  List<String> favorites = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    loadFavorites();
+  }
+
+  Future<void> loadFavorites() async {
+    favorites = await FavoriteService.getFavorites();
+
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,6 +126,24 @@ class _ProductPageState extends State<ProductPage> {
 
                               subtitle: Text(
                                 rupiah.format(product.price * 16000),
+                              ),
+
+                              trailing: IconButton(
+                                onPressed: () async {
+                                  await FavoriteService.toggleFavorite(
+                                    product.title,
+                                  );
+
+                                  loadFavorites();
+                                },
+
+                                icon: Icon(
+                                  favorites.contains(product.title)
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+
+                                  color: Colors.red,
+                                ),
                               ),
                             ),
                           ),
