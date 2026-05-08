@@ -56,11 +56,10 @@ class _ProductPageState extends State<ProductPage> {
 
           actions: [
             IconButton(
-              onPressed: () {
+              onPressed: () async {
                 final result = await context.push('/favorite');
                 if (result == true) {
-
-                   loadFavorites();
+                  loadFavorites();
                 }
               },
 

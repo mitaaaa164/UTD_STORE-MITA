@@ -1,7 +1,7 @@
-import 'dart:convert';
+import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class BitcoinPage extends StatefulWidget {
   const BitcoinPage({super.key});
@@ -11,40 +11,42 @@ class BitcoinPage extends StatefulWidget {
 }
 
 class _BitcoinPageState extends State<BitcoinPage> {
-  late WebSocketChannel channel;
+  final dio = Dio();
 
   String price = "Loading...";
+
+  Timer? timer;
 
   @override
   void initState() {
     super.initState();
 
-    connectWebSocket();
+    getBitcoinPrice();
+
+    timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      getBitcoinPrice();
+    });
   }
 
-  void connectWebSocket() {
-    channel = WebSocketChannel.connect(
-      Uri.parse('wss://ws.coincap.io/prices?assets=bitcoin'),
-    );
+  Future<void> getBitcoinPrice() async {
+    try {
+      final response = await dio.get(
+        'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd',
+      );
 
-    channel.stream.listen(
-      (message) {
-        final data = jsonDecode(message);
+      final data = response.data;
 
-        setState(() {
-          price = data['bitcoin'];
-        });
-      },
-
-      onError: (error) {
-        debugPrint(error.toString());
-      },
-    );
+      setState(() {
+        price = data['bitcoin']['usd'].toString();
+      });
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   @override
   void dispose() {
-    channel.sink.close();
+    timer?.cancel();
 
     super.dispose();
   }
@@ -59,12 +61,12 @@ class _BitcoinPageState extends State<BitcoinPage> {
           mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
-            const Icon(Icons.currency_bitcoin, size: 80, color: Colors.orange),
+            const Icon(Icons.currency_bitcoin, size: 100, color: Colors.orange),
 
             const SizedBox(height: 20),
 
             const Text(
-              "BTC Live",
+              "BTC / USD",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
 
@@ -72,8 +74,12 @@ class _BitcoinPageState extends State<BitcoinPage> {
 
             Text(
               "\$ $price",
-              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
+
+            const SizedBox(height: 10),
+
+            const Text("Realtime Update Every 1 Second"),
           ],
         ),
       ),
