@@ -20,7 +20,7 @@ class _SplashPageState extends State<SplashPage> {
     await Future.delayed(const Duration(seconds: 1));
 
     if (mounted) {
-      context.go('/products');
+      context.go('/product');
     }
   }
 

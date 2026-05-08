@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import 'package:utd_store_mita/core/storage/favorite_service.dart';
@@ -50,7 +51,31 @@ class _ProductPageState extends State<ProductPage> {
       create: (_) => ProductCubit()..getProducts(),
 
       child: Scaffold(
-        appBar: AppBar(title: const Text("UTD Store - Mita")),
+        appBar: AppBar(
+          title: const Text("UTD Store - Mita"),
+
+          actions: [
+            IconButton(
+              onPressed: () {
+                final result = await context.push('/favorite');
+                if (result == true) {
+
+                   loadFavorites();
+                }
+              },
+
+              icon: const Icon(Icons.favorite),
+            ),
+
+            IconButton(
+              onPressed: () {
+                context.push('/bitcoin');
+              },
+
+              icon: const Icon(Icons.currency_bitcoin),
+            ),
+          ],
+        ),
 
         body: BlocBuilder<ProductCubit, ProductState>(
           builder: (context, state) {
