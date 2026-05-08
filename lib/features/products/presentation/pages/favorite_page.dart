@@ -45,6 +45,9 @@ class _FavoritePageState extends State<FavoritePage> {
                     leading: const Icon(Icons.favorite, color: Colors.red),
 
                     title: Text(item),
+                    subtitle: Text(
+                      "Disimpan pada ${TimeOfDay.now().format(context)}",
+                    ),
 
                     trailing: IconButton(
                       onPressed: () async {

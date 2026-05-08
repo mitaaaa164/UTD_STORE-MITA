@@ -1,16 +1,12 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FavoriteService {
-  static Future<List<String>> getFavorites() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    return prefs.getStringList('favorites') ?? [];
-  }
+  static const String key = "favorites";
 
   static Future<void> toggleFavorite(String title) async {
     final prefs = await SharedPreferences.getInstance();
 
-    final favorites = prefs.getStringList('favorites') ?? [];
+    List<String> favorites = prefs.getStringList(key) ?? [];
 
     if (favorites.contains(title)) {
       favorites.remove(title);
@@ -18,6 +14,12 @@ class FavoriteService {
       favorites.add(title);
     }
 
-    await prefs.setStringList('favorites', favorites);
+    await prefs.setStringList(key, favorites);
+  }
+
+  static Future<List<String>> getFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    return prefs.getStringList(key) ?? [];
   }
 }
