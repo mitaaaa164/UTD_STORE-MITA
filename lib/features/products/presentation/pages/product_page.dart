@@ -73,6 +73,14 @@ class _ProductPageState extends State<ProductPage> {
 
               icon: const Icon(Icons.currency_bitcoin),
             ),
+
+            IconButton(
+              onPressed: () {
+                context.push('/battery');
+              },
+
+              icon: const Icon(Icons.battery_full),
+            ),
           ],
         ),
 

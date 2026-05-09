@@ -4,6 +4,7 @@ import 'package:utd_store_mita/features/splash/presentation/pages/splash_page.da
 import 'package:utd_store_mita/features/products/presentation/pages/product_page.dart';
 import 'package:utd_store_mita/features/bitcoin/presentation/pages/bitcoin_page.dart';
 import 'package:utd_store_mita/features/products/presentation/pages/favorite_page.dart';
+import 'package:utd_store_mita/features/battery/presentation/pages/battery_page.dart';
 
 final GoRouter router = GoRouter(
   routes: [
@@ -17,5 +18,6 @@ final GoRouter router = GoRouter(
       path: '/favorite',
       builder: (context, state) => const FavoritePage(),
     ),
+    GoRoute(path: '/battery', builder: (context, state) => const BatteryPage()),
   ],
 );
